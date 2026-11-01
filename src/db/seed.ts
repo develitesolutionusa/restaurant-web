@@ -1,4 +1,4 @@
-import "dotenv/config";
+import { config } from "dotenv";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
@@ -7,7 +7,9 @@ import { reviews as seedReviews } from "../data/reviews";
 import { galleryImages as seedGallery } from "../data/gallery";
 import { eventPackages as seedEvents } from "../data/events";
 
-const client = postgres(process.env.DATABASE_URL!);
+config({ path: ".env.local" });
+
+const client = postgres(process.env.DATABASE_URL!, { prepare: false });
 const db = drizzle(client, { schema });
 
 async function seed() {

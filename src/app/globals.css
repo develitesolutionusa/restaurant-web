@@ -33,3 +33,16 @@ textarea,
 select {
   color-scheme: dark;
 }
+
+@media print {
+  body.printing-feedback header,
+  body.printing-feedback footer,
+  body.printing-feedback .no-print {
+    display: none !important;
+  }
+
+  body.printing-feedback {
+    background: white !important;
+    color: #111 !important;
+  }
+}

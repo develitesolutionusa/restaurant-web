@@ -46,6 +46,7 @@ export default function Footer() {
                 { href: "/events", label: "Events & Catering" },
                 { href: "/contact", label: "Contact" },
                 { href: "/reviews", label: "Reviews" },
+                { href: "/feedback", label: "Leave Feedback" },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="hover:text-primary transition-colors">

@@ -1,4 +1,5 @@
-import { pgTable, serial, text, integer, decimal, boolean, timestamp } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { pgTable, serial, text, integer, decimal, boolean, timestamp, index, check } from "drizzle-orm/pg-core";
 
 export const menuItems = pgTable("menu_items", {
   id: serial("id").primaryKey(),
@@ -99,3 +100,33 @@ export const contacts = pgTable("contacts", {
   message: text("message").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
+export const feedback = pgTable(
+  "feedback",
+  {
+    id: serial("id").primaryKey(),
+    rating: integer("rating").notNull(),
+    comment: text("comment").notNull(),
+    customerName: text("customer_name"),
+    location: text("location").notNull(),
+    sentiment: text("sentiment").notNull(),
+    status: text("status").default("open").notNull(),
+    resolutionNote: text("resolution_note"),
+    ipHash: text("ip_hash"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+    resolvedAt: timestamp("resolved_at", { withTimezone: true }),
+  },
+  (table) => [
+    index("feedback_rating_idx").on(table.rating),
+    index("feedback_location_idx").on(table.location),
+    index("feedback_created_at_idx").on(table.createdAt),
+    index("feedback_status_idx").on(table.status),
+    index("feedback_sentiment_idx").on(table.sentiment),
+    index("feedback_location_created_idx").on(table.location, table.createdAt),
+    index("feedback_ip_hash_created_idx").on(table.ipHash, table.createdAt),
+    check("feedback_rating_range", sql`${table.rating} >= 1 AND ${table.rating} <= 5`),
+    check("feedback_sentiment_check", sql`${table.sentiment} in ('positive', 'neutral', 'negative')`),
+    check("feedback_status_check", sql`${table.status} in ('open', 'resolved')`),
+  ],
+);
